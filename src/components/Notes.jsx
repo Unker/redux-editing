@@ -10,10 +10,7 @@ const Notes = () => {
   const [noteText, setNoteText] = useState('');
   const [notePrice, setNotePrice] = useState('');
   const [editId, setEditId] = useState('');
-
-  const handleNoteTextChange = (e) => {
-    setNoteText(e.target.value);
-  };
+  const [filterText, setFilterText] = useState('');
 
   const handleNotePriceChange = (e) => {
     const value = e.target.value;
@@ -56,7 +53,7 @@ const Notes = () => {
   }
 
   const deleteNote = (id) => {
-    if(editId) {
+    if (editId) {
       setEditId('');
       clearInputs();
     }
@@ -67,12 +64,16 @@ const Notes = () => {
     });
   }
 
+  const filteredNotes = notesList.filter((note) =>
+    note.text.toLowerCase().includes(filterText.toLowerCase())
+  );
+
   return (
     <>
       <form onSubmit={submitHandler}>
         <div>
           <input type="text" required placeholder='Задача...' value={noteText}
-            onChange={handleNoteTextChange}
+            onChange={(e) => setNoteText(e.target.value)}
           />
           <input type="number" required placeholder='Цена...' value={notePrice}
             onChange={handleNotePriceChange}
@@ -82,9 +83,16 @@ const Notes = () => {
         </div>
       </form>
 
+      <input
+        type="text"
+        placeholder="Фильтр..."
+        value={filterText}
+        onChange={(e) => setFilterText(e.target.value)}
+      />
+      
       <div>
-        {notesList && notesList.map((note) => (
-          <div className="notesList">
+        {filteredNotes.map((note) => (
+          <div key={note.id} className="notesList">
             <div>{note.text}</div>
             <div>{note.price}</div>
             <div>
