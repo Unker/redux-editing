@@ -14,33 +14,37 @@ const initialState = {
 const notesReducer = (state = initialState, action) => {
   switch (action.type) {
     case APPEND_NOTE:
-      let newNote = action.payload;
-      newNote = {
-        ...newNote,
-        id: uuidv4(),
-        text: action.payload.text,
-        price: Number(action.payload.price)
-      }
-      state.notesList.push(note);
-      return state;
+      return {
+        ...state,
+        notesList: [
+          ...state.notesList,
+          {
+            id: uuidv4(),
+            text: action.payload.text,
+            price: Number(action.payload.price)
+          }
+        ]
+      };
 
     case EDIT_NOTE:
-      state.notesList = state.notesList.filter((item) => item.id !== action.payload.id)
-      let editNote = action.payload;
-      editNote = {
-        ...editNote,
-        id: action.payload.id,
-        text: action.payload.text,
-        price: Number(action.payload.price)
-      }
-      state.notesList.push(editNote);
-      return state
+      return {
+        ...state,
+        notesList: state.notesList.map(note =>
+          note.id === action.payload.id ?
+            {
+              ...note,
+              text: action.payload.text,
+              price: Number(action.payload.price)
+            } : note
+        )
+      };
 
     case DELETE_NOTE:
-      debugger
-      state.notesList = state.notesList.filter((item) => item.id !== action.payload.id)
-      return state;
-
+      return {
+        ...state,
+        notesList: state.notesList.filter(item => item.id !== action.payload.id)
+      };
+      
     default:
       return state;
   }

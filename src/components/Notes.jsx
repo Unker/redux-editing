@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { APPEND_NOTE, EDIT_NOTE, DELETE_NOTE } from "../redux/actions";
 import { useState } from "react";
-
+import './Notes.css'
 
 const Notes = () => {
   const dispatch = useDispatch();
@@ -22,6 +22,11 @@ const Notes = () => {
     }
   };
 
+  const clearInputs = () => {
+    setNoteText('');
+    setNotePrice('');
+  }
+
   const submitHandler = (e) => {
     e.preventDefault();
 
@@ -33,11 +38,12 @@ const Notes = () => {
         price: notePrice,
       },
     });
+    clearInputs();
   }
 
   const editNote = (noteId) => {
     let note = notesList.filter((item) => item.id === noteId)[0]
-    if(note) {
+    if (note) {
       setNoteText(note.text)
       setNotePrice(note.price)
       setEditId(noteId);
@@ -45,7 +51,20 @@ const Notes = () => {
   }
 
   const cancelEdit = () => {
+    clearInputs();
     setEditId('');
+  }
+
+  const deleteNote = (id) => {
+    if(editId) {
+      setEditId('');
+      clearInputs();
+    }
+
+    dispatch({
+      type: DELETE_NOTE,
+      payload: { id: id },
+    });
   }
 
   return (
@@ -63,31 +82,19 @@ const Notes = () => {
         </div>
       </form>
 
-      <table>
-        <thead>
-          <tr>
-          </tr>
-        </thead>
-        <tbody>
-          {notesList && notesList.map((row) => (
-            <tr key={row.id}>
-              <td>{row.text}</td>
-              <td>{row.price}</td>
-              <td>
-                <button
-                  onClick={(e) => {
-                    dispatch({
-                      type: DELETE_NOTE,
-                      payload: {id: row.id},
-                    });
-                  }}
-                >✘</button>
-                <button onClick={() => editNote(row.id)}>✎</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div>
+        {notesList && notesList.map((note) => (
+          <div className="notesList">
+            <div>{note.text}</div>
+            <div>{note.price}</div>
+            <div>
+              <button onClick={() => deleteNote(note.id)}>✘</button>
+              <button onClick={() => editNote(note.id)}>✎</button>
+            </div>
+          </div>
+        ))}
+
+      </div>
     </>
   )
 }
