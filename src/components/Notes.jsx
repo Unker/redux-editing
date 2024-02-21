@@ -53,7 +53,7 @@ const Notes = () => {
   }
 
   const deleteNote = (id) => {
-    if (editId) {
+    if (id === editId) {
       setEditId('');
       clearInputs();
     }
